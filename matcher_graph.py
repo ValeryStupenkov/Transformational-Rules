@@ -22,9 +22,11 @@ def extractor(G, s1, s2):
         if len(path) == max_len:
             max_paths.append(path)
     print(max_paths)
+    result = []
     for path in max_paths:
-        path_to_string(path, s1, s2)
-    return
+        res, variables = path_to_string(path, s1, s2)
+        result.append(tuple(res, variables))
+    return result
 
 def path_to_string(path, s1, s2):
     cur_pos = 0
@@ -59,7 +61,7 @@ def path_to_string(path, s1, s2):
             cur_pos = node_pos
     print(res)
     print(variables)
-    return
+    return res, variables
 
 def match(s1, s2):
     n = len(s1)
@@ -85,19 +87,31 @@ def match(s1, s2):
     #print(G.edges)
     paths = nx.all_simple_paths(G, '0,0', '5,6')
     #print(list(paths))
-    extractor(G, s1, s2)
+    return extractor(G, s1, s2)
 
 def check_sample(sample, s):
     # check if there is sample in results from match
-    return
+    results = match(sample, s)
+    for r in results:
+        if sample == r[0]:
+            return True
+    return False
 
 def find_sample(s1, s2):
     # find common sample from two strings
+    results = match(s1,s2)
+    
     return
 
 def find_common_sample(sample1, sample2):
     # find most common sample of two samples
-    return
+    results = match(sample1, sample2)
+    for r in results:
+        if sample1 == r[0]:
+            return sample1
+        elif sample2 == r[0]:
+            return sample2
+    return ""
 
 match("баXан", "бараXан")
 
