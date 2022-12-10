@@ -21,11 +21,11 @@ def extractor(G, s1, s2):
     for path in all_paths:
         if len(path) == max_len:
             max_paths.append(path)
-    print(max_paths)
+    #print(max_paths)
     result = []
     for path in max_paths:
         res, variables = path_to_string(path, s1, s2)
-        result.append(tuple(res, variables))
+        result.append(tuple([res, variables]))
     return result
 
 def path_to_string(path, s1, s2):
@@ -59,8 +59,8 @@ def path_to_string(path, s1, s2):
                         break
 
             cur_pos = node_pos
-    print(res)
-    print(variables)
+    #print(res)
+    #print(variables)
     return res, variables
 
 def match(s1, s2):
@@ -94,14 +94,37 @@ def check_sample(sample, s):
     results = match(sample, s)
     for r in results:
         if sample == r[0]:
-            return True
-    return False
+            return r[0], r[1]
+    return "", {}
+
+def transform_rule(sample, variables):
+    result = ""
+    vars = {"X": "", "Y": "", "Z": ""}
+    for i in range(len(sample)):
+        if sample[i].isupper():
+            result += variables[sample[i]]
+        elif sample[i].islower():
+            if i > 0 and result[-1].isupper():
+                vars[result[-1]] += sample[i]
+            else:
+                for k in vars.keys():
+                    if vars[k] == "":
+                        vars[k] += sample[i]
+                        result += k
+                        break
+    return result
 
 def find_sample(s1, s2):
     # find common sample from two strings
-    results = match(s1,s2)
-    
-    return
+    results = match(s1, s2)
+    print(results)
+    transform_rules = []
+    for r in results:
+        new_samp1 = transform_rule(r[0], r[1])
+        tmp_r = check_sample(r[0], s1)
+        new_samp2 = transform_rule(tmp_r[0], tmp_r[1])
+        transform_rules.append(tuple([new_samp1, new_samp2]))
+    return transform_rules
 
 def find_common_sample(sample1, sample2):
     # find most common sample of two samples
@@ -113,5 +136,7 @@ def find_common_sample(sample1, sample2):
             return sample2
     return ""
 
-match("баXан", "бараXан")
-
+result = find_sample("баклан", "барабан")
+m = match("баXаYн", "баклан")
+print(result)
+print(m)
