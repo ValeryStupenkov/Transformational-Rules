@@ -64,7 +64,7 @@ def build_rule(s1, s2, F, vars, blanks, i, j):
                 res += s2[j]
                 prev_i, prev_j = i, j
                 i, j = find_max_pos(F[i + 1:, j + 1:], n, m, blanks)
-                # случай для заполнения переменных (обычный)
+            # случай для заполнения переменных (обычный)
             elif i != prev_i+1 or j != prev_j+1:
                 # цикл добавления переменной
                 for key in vars.keys():
@@ -78,6 +78,30 @@ def build_rule(s1, s2, F, vars, blanks, i, j):
                 res += s2[j]
                 prev_i, prev_j = i, j
                 i, j = find_max_pos(F[i + 1:, j + 1:], n, m, blanks)
+
+            # Доп часть для проверки конца
+            if i != n and j != m and F[i][j] == 0:
+                # цикл добавления переменной
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        vars[key] = (s1[i:], s2[j:])
+                        res += key
+                        break
+                break
+            elif i != n and j == m:
+                # цикл добавления переменной
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        vars[key] = (s1[i:], "")
+                        res += key
+                        break
+            elif i == n and j != m:
+                # цикл добавления переменной
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        vars[key] = ("", s2[j:])
+                        res += key
+                        break
     return res
 
 
@@ -115,6 +139,8 @@ def find_max_pos(a, n, m, blanks):
 
 # Построение правил на основе строки и шаблона
 # Вариант build_rule с возможностью сопоставлять переменные (экспериментальный)
+# TODO исправить: неправильно сопоставляется в случае, если шаблон длиннее строки
+# + возвращаются не все наибольшие результирующие строки
 def build_rule_for_sample(s1, s2, F, vars, blanks, i, j):
     n = len(s1)
     m = len(s2)
@@ -191,6 +217,30 @@ def build_rule_for_sample(s1, s2, F, vars, blanks, i, j):
                 # конец эксп части
                 prev_i, prev_j = i, j
                 i, j = find_max_pos(F[i + 1:, j + 1:], n, m, blanks)
+
+            # Доп часть для проверки конца
+            if i != n and j != m and F[i][j] == 0:
+                # цикл добавления переменной
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        vars[key] = (s1[i:], s2[j:])
+                        res += key
+                        break
+                break
+            elif i != n and j == m:
+                # цикл добавления переменной
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        vars[key] = (s1[i:], "")
+                        res += key
+                        break
+            elif i == n and j != m:
+                # цикл добавления переменной
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        vars[key] = ("", s2[j:])
+                        res += key
+                        break
     return res
 
 def build_rules_for_sample(s1, s2, F, blanks):

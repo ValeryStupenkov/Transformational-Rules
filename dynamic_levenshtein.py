@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import unravel_index
-import BuildRuleService as bs
+import build_rule_service as bs
 
 def calc_lev_with_blanks(s1, s2):
     n = len(s1)
@@ -70,7 +70,8 @@ def calc_lev_with_blanks_for_sample(s1, s2):
     return rules
 
 
-#calc_lev_with_blanks("гомеопатия", "геометрия")
+#calc_lev_with_blanks("гомеопат", "геометрия")
 calc_lev_without_blanks("гомеопатия", "геометрия")
-calc_lev_without_blanks("баран", "баклан")
-calc_lev_with_blanks_for_sample("баXан", "баран")
+#calc_lev_without_blanks("баран", "баклан")
+calc_lev_with_blanks("баран", "баралок")
+calc_lev_with_blanks_for_sample("баXран", "баран")
