@@ -1,16 +1,33 @@
-import psycopg2
+from peewee import *
+import TransformRule
+import use_levenstein as ul
 
-class DatabaseConnection:
-    def __init__(self, name):
-        self.conn = psycopg2.connect(dbname=name, user="postgres")
-        self.cur = self.conn.cursor()
+def get_rule_by_id(id):
+    rule = TransformRule.get(TransformRule.rule_id == id)
+    return rule
 
-    def connection(self):
-        return self.conn
+# В этом разделе должна быть и реализация стратегий ранжировния
 
-    def execute(self, sql, params=None):
-        self.cursor.execute(sql, params or ())
+# Просто возвращает первое совпавшее правило
+def get_rule(string):
+    query = TransformRule.select()
+    rules_selected = query.dicts().execute()
+    for rule in rules_selected:
+        if ul.check_sample(string, rule['sample']):
+            return rule
 
-    def close(self):
-        self.cur.close()
-        self.conn.close()
+# Создание правила в бд
+def create_rule(sample, result):
+    TransformRule.create(sample=sample, result=result)
+
+# Удаление правила по id
+def delete_rule_by_id(id):
+    rule = TransformRule.get(TransformRule.rule_id == id)
+    rule.delete_instance()
+
+
+# Возвращает все правила, примениемые к строке
+def get_rules(string):
+    query = TransformRule.select().where(ul.check_sample(string, TransformRule.sample) == True)
+    rules_selected = query.dicts().execute()
+    return rules_selected

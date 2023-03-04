@@ -1,27 +1,6 @@
 import numpy as np
 import build_rule_service as bs
 
-def calc_lev_with_steps(s1, s2):
-    n = len(s1)
-    m = len(s2)
-    # Инициализация матрицы
-    a = [[0 for x in range(m)] for y in range(n)]
-    F = np.array(a)
-    for i in reversed(range(n)):
-        for j in reversed(range(m)):
-            if s1[i] == s2[j] or s1[i].isupper() or (s1.isupper() and s2.isupper()):
-                if i < n - 1 and j < m - 1:
-                    F[i][j] = max(map(max, F[i + 1:, j + 1:])) + 1
-                else:
-                    F[i][j] = 1
-    for line in F:
-        print(line)
-
-    rules = build_iterations(s1, s2, F)
-    #print(rules)
-    return rules
-
-
 def build_iterations(s1, s2, F):
     n = len(s1)
     m = len(s2)
@@ -47,11 +26,6 @@ def build_iterations(s1, s2, F):
             for key in results:
                 prev_i = results[key][0][0]
                 prev_j = results[key][0][1]
-                # В этом if косяк !
-                '''
-                if prev_i == n-2 or prev_j == m-2:
-                    maxes = [[prev_i+1, prev_j+1]]
-                '''
                 if prev_i == n-1 or prev_j == m-1:
                     tmp_dict[key] = [[results[key][0][0]+1, results[key][0][1]+1], results[key][1]]
                     continue
@@ -99,12 +73,16 @@ def build_iterations(s1, s2, F):
                 if results[key][0][1] < max_j:
                     max_j = results[key][0][1]
 
-    print(results)
+    #print(results)
     # Перевод из внутреннего представления и склеивание переменных
     rules = {}
     for key in results.keys():
-        rule = bs.join_variables(key, results[key][1])
-        rules[rule] = results[key][1]
+        tmp_v = results[key][1]
+        # Объединение соседних переменных
+        rule = bs.join_variables(key, tmp_v)
+        # Удаление дубликатов переменных
+        rule = replace_equal_vars(rule, tmp_v)
+        rules[rule] = tmp_v
 
     return rules
 
@@ -134,6 +112,7 @@ def find_max_poses(a, n, m, blanks):
     for max in maxes:
         max[0] += n-shape[0]
         max[1] += m-shape[1]
+    # Отладочная печать
     print(maxes)
     return maxes
 
@@ -148,19 +127,18 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
             for key in vars.keys():
                 if vars[key] == ("", ""):
                     if i != 0:
-                        vars[key] = (s1[0:i], "")
+                        vars[key] = (delete_variables(s1[0:i]), "")
                     if j != 0:
-                        vars[key] = (vars[key][0], s2[0:j])
+                        vars[key] = (vars[key][0], delete_variables(s2[0:j]))
                     res += key
                     break
         res += s2[j]
     # Случай, при котором всё ок
     elif i == prev_i + 1 and j == prev_j + 1:
-        # эксперименитальная часть
         if s1[i].isupper():
             for key in vars.keys():
                 if vars[key] == ("", ""):
-                    vars[key] = ("", s2[j])
+                    vars[key] = ("", delete_variables(s2[j]))
                     res += key
                     break
         else:
@@ -173,24 +151,43 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
         for key in vars.keys():
             if vars[key] == ("", ""):
                 if i != prev_i + 1:
-                    vars[key] = (s1[prev_i + 1:i], "")
+                    vars[key] = (delete_variables(s1[prev_i + 1:i]), "")
                 if j != prev_j + 1:
-                    vars[key] = (vars[key][0], s2[prev_j + 1:j])
+                    vars[key] = (vars[key][0], delete_variables(s2[prev_j + 1:j]))
                 res += key
                 break
-        # эксперименитальная часть
         if s1[i].isupper():
             for key in vars.keys():
                 if vars[key] == ("", ""):
-                    vars[key] = ("", s2[j])
+                    vars[key] = ("", delete_variables(s2[j]))
                     res += key
                     break
         else:
             res += s2[j]
-        # конец эксп части
 
     return res
 
 
+# Удаление переменных из строки
+def delete_variables(str):
+    res = ""
+    for i in range(len(str)):
+        if not str[i].isupper():
+            res += str[i]
+    return res
 
-print(calc_lev_with_steps("гомXпатия", "геометXия"))
+# Удаление дубликатов переменных
+def replace_equal_vars(sample, vars):
+    res = ""
+    n = len(sample)
+    for i in reversed(range(0, n)):
+        if sample[i].isupper():
+            for key in vars.keys():
+                if vars[key] != ("", "") and vars[key] == vars[sample[i]] and key != sample[i]:
+                    res += key
+                    vars[sample[i]] = ("", "")
+            if vars[sample[i]] == ("", ""):
+                continue
+        res += sample[i]
+
+    return res[::-1]

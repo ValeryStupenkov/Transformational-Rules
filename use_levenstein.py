@@ -1,9 +1,9 @@
 import dynamic_levenshtein as ld
 
 #Правила должны храниться в виде пар, в коде должны быть в виде tuple
-# Метод для проверки соответствия левой части правили образцу
+# Метод для проверки соответствия левой части правила образцу
 def check_sample(sample, rule):
-    rules = ld.calc_lev_with_blanks_for_sample(sample, rule)
+    rules = ld.calc_lev_with_steps(sample, rule)
     for rule in rules.keys():
         if sample == rule:
             return True
@@ -19,5 +19,10 @@ def create_new_rules(s1, s2, blanks):
 
 # Создание новых шаблонов
 def create_new_sample(sample, s):
-    rules = ld.calc_lev_with_blanks_for_sample(sample, s, True)
+    rules = ld.calc_lev_with_steps(sample, s)
     return rules
+
+# Создание более общих образцов
+def find_most_common(s1, s2):
+    results = ld.calc_lev_with_steps(s1, s2)
+    return results
