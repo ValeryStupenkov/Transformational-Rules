@@ -9,17 +9,19 @@ def get_rule_by_id(id):
     rule = TransformRule.get(TransformRule.rule_id == id)
     return rule
 
-# Просто возвращает первое совпавшее правило
-def get_rule(string):
+# Возвращает все правила
+def get_all_rules():
     query = TransformRule.select()
     rules_selected = query.dicts().execute()
-    for rule in rules_selected:
-        if ul.check_sample(string, rule['sample']):
-            return rule
+    return rules_selected
 
 # Создание правила в бд
 def create_rule(sample, result, group=1, priority=1):
     TransformRule.create(sample=sample, result=result, group=group, priority=priority, timestamp=datetime.now())
+
+# Создание правила в бд на основе пары
+def create_rule(rule, group=1, priority=1):
+    TransformRule.create(sample=rule[0], result=rule[1], group=group, priority=priority, timestamp=datetime.now())
 
 # Удаление правила по id
 def delete_rule_by_id(id):

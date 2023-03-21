@@ -3,7 +3,7 @@ import use_levenstein as ul
 import random
 
 # Реализация стратегии частное-общее, выбор более "сложных" правил
-def get_most_particular(string, group=-1, priority=-1):
+def get_least_common(string, group=-1, priority=-1):
     rules = bd.get_rules_by_parameters(string, group, priority)
     mp_rule = rules[0]
     for rule in rules:
@@ -43,6 +43,8 @@ def get_latest_rule(string, group=-1, priority=-1):
     for rule in rules:
         if rule['Timestamp'] > latest_rule['Timestamp']:
             latest_rule = rule
+
+    return latest_rule
 
 
 

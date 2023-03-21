@@ -28,10 +28,6 @@ def find_most_common(s1, s2):
     results = ld.calc_lev_with_steps(s1, s2)
     return results
 
-# Метод для создания правила "руками"
-def create_rule(sample, result):
-    return (sample, result)
-
 # rule это tuple вида (sample, result)
 def create_common_rules(rule1, rule2):
     new_samples = create_new_samples(rule1[0], rule2[0])
@@ -43,3 +39,14 @@ def create_common_rules(rule1, rule2):
             new_rules += (sample, result)
 
     return new_rules
+
+# Вернуть правую часть правила с подставленными значениями переменных
+def get_result_of_rule(sample, vars):
+    res = ""
+    for i in range(len(sample)):
+        if sample[i].isupper():
+            res += vars[sample[i]]
+        else:
+            res += sample[i]
+    return res
+

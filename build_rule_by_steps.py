@@ -81,7 +81,8 @@ def build_iterations(s1, s2, F):
         # Объединение соседних переменных
         rule = bs.join_variables(key, tmp_v)
         # Удаление дубликатов переменных
-        rule = replace_equal_vars(rule, tmp_v)
+        # TODO fix
+        #rule = replace_equal_vars(rule, tmp_v)
         rules[rule] = tmp_v
 
     return rules

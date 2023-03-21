@@ -95,4 +95,4 @@ def calc_lev_with_steps(s1, s2):
 #calc_lev_with_blanks("баран", "баралок")
 #calc_lev_with_blanks_for_sample("баXран", "баран")
 
-print(calc_lev_with_steps("гXмеXия", "гомеоия"))
+print(calc_lev_with_steps("XомеYия", "гXмеYия"))
