@@ -85,7 +85,7 @@ def calc_lev_with_steps(s1, s2):
         print(line)
 
     rules = brs.build_iterations(s1, s2, F)
-    #print(rules)
+    print(rules)
     return rules
 
 
@@ -95,4 +95,5 @@ def calc_lev_with_steps(s1, s2):
 #calc_lev_with_blanks("баран", "баралок")
 #calc_lev_with_blanks_for_sample("баXран", "баран")
 
-print(calc_lev_with_steps("XомеYия", "гXмеYия"))
+#print(calc_lev_with_steps("XомеYия", "гXмеYия"))
+#print(calc_lev_with_steps("XомеYий", "гXмеYий"))

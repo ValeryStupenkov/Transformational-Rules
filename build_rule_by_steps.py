@@ -9,6 +9,7 @@ def build_iterations(s1, s2, F):
             "D": ("", ""), "E": ("", ""), "F": ("", ""), "G": ("", "")}
     results = {"": [[0, 0], vars]}
     begins = find_max_poses(F, n, m, True)
+    samples = {}
     for begin in begins:
         # first step
         prev_i = 0
@@ -16,7 +17,7 @@ def build_iterations(s1, s2, F):
         max_i = prev_i
         max_j = prev_j
         tmp_dict = {}
-        tmp_vars = vars
+        tmp_vars = vars.copy()
         first_step_res = build_rule_step("", s1, s2, tmp_vars, prev_i, prev_j, begin)
         tmp_dict[first_step_res] = [begin, tmp_vars]
         results = tmp_dict
@@ -72,14 +73,18 @@ def build_iterations(s1, s2, F):
                     max_i = results[key][0][0]
                 if results[key][0][1] < max_j:
                     max_j = results[key][0][1]
+        for key in results:
+            samples[key] = results[key]
 
     #print(results)
     # Перевод из внутреннего представления и склеивание переменных
     rules = {}
-    for key in results.keys():
-        tmp_v = results[key][1]
+    for key in samples.keys():
+        tmp_v = samples[key][1]
         # Объединение соседних переменных
-        rule = bs.join_variables(key, tmp_v)
+        # TODO fix
+        #rule = bs.join_variables(key, tmp_v)
+        rule = key
         # Удаление дубликатов переменных
         # TODO fix
         #rule = replace_equal_vars(rule, tmp_v)
@@ -128,20 +133,42 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
             for key in vars.keys():
                 if vars[key] == ("", ""):
                     if i != 0:
-                        vars[key] = (delete_variables(s1[0:i]), "")
+                        #vars[key] = (delete_variables(s1[0:i]), "")
+                        vars[key] = (s1[0:i], "")
                     if j != 0:
-                        vars[key] = (vars[key][0], delete_variables(s2[0:j]))
+                        #vars[key] = (vars[key][0], delete_variables(s2[0:j]))
+                        vars[key] = (vars[key][0], s2[0:j])
                     res += key
                     break
-        res += s2[j]
+        if res != "":
+            last_char = res[-1]
+        else:
+            last_char = " "
+        if s1[i].isupper():
+            if last_char.isupper():
+                vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[j])
+            else:
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        # vars[key] = ("", delete_variables(s2[j]))
+                        vars[key] = ("", s2[j])
+                        res += key
+                        break
+        else:
+            res += s2[j]
     # Случай, при котором всё ок
     elif i == prev_i + 1 and j == prev_j + 1:
+        last_char = res[-1]
         if s1[i].isupper():
-            for key in vars.keys():
-                if vars[key] == ("", ""):
-                    vars[key] = ("", delete_variables(s2[j]))
-                    res += key
-                    break
+            if last_char.isupper():
+                vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[j])
+            else:
+                for key in vars.keys():
+                    if vars[key] == ("", ""):
+                        #vars[key] = ("", delete_variables(s2[j]))
+                        vars[key] = ("", s2[j])
+                        res += key
+                        break
         else:
             res += s2[j]
         # конец эксп части
@@ -149,23 +176,31 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
     # случай для заполнения переменных (обычный)
     elif i != prev_i + 1 or j != prev_j + 1:
         # цикл добавления переменной
-        for key in vars.keys():
-            if vars[key] == ("", ""):
-                if i != prev_i + 1:
-                    vars[key] = (delete_variables(s1[prev_i + 1:i]), "")
-                if j != prev_j + 1:
-                    vars[key] = (vars[key][0], delete_variables(s2[prev_j + 1:j]))
-                res += key
-                break
-        if s1[i].isupper():
+        last_char = res[-1]
+        if last_char.isupper():
+            if i != prev_i + 1:
+                # vars[key] = (delete_variables(s1[prev_i + 1:i]), "")
+                vars[last_char] = (vars[last_char][0] + s1[prev_i + 1:i], "")
+            if j != prev_j + 1:
+                # vars[key] = (vars[key][0], delete_variables(s2[prev_j + 1:j]))
+                vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[prev_j + 1:j])
+        else:
             for key in vars.keys():
                 if vars[key] == ("", ""):
-                    vars[key] = ("", delete_variables(s2[j]))
+                    if i != prev_i + 1:
+                        #vars[key] = (delete_variables(s1[prev_i + 1:i]), "")
+                        vars[key] = (s1[prev_i + 1:i], "")
+                    if j != prev_j + 1:
+                        #vars[key] = (vars[key][0], delete_variables(s2[prev_j + 1:j]))
+                        vars[key] = (vars[key][0], s2[prev_j + 1:j])
                     res += key
                     break
+        # Здесь в конце res всегда переменная, так что просто дописываем в неё
+        last_char = res[-1]
+        if s1[i].isupper():
+            vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[j])
         else:
             res += s2[j]
-
     return res
 
 

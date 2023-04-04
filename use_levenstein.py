@@ -50,3 +50,41 @@ def get_result_of_rule(sample, vars):
             res += sample[i]
     return res
 
+# Создание правила на основе образца и значений переменных
+def make_rule_from_sample(s, vars):
+    tmp_vars = {"X": "", "Y": "", "Z": "",
+            "A": "", "B": "", "C": "",
+            "D": "", "E": "", "F": "", "G": ""}
+    last_var = "X"
+    res1 = ""
+    res2 = ""
+    for i in range(len(s)):
+        # Вместо переменной ставим её значение
+        if s[i].isupper():
+            res1 += vars[s[i]][0]
+            res2 += vars[s[i]][1]
+        # Вместо символов ставим переменные
+        elif i == 0 and s[i].islower():
+            for k in tmp_vars.keys():
+                if tmp_vars[k] == "":
+                    tmp_vars[k] += s[i]
+                    res1 += k
+                    res2 += k
+                    last_var = k
+                    break
+        # Вместо символов дописываем в переменную
+        elif s[i-1].islower() and s[i].islower():
+            tmp_vars[last_var] += s[i]
+        # Вместо символа идущего после вставки значения пишем переменную
+        elif s[i-1].isupper() and s[i].islower():
+            for k in tmp_vars.keys():
+                if tmp_vars[k] == "":
+                    res1 += k
+                    res2 += k
+                    tmp_vars[k] += s[i]
+                    last_var = k
+                    break
+    res = tuple([res1, res2])
+    print(tmp_vars)
+    return res
+

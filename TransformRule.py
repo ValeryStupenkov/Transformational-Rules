@@ -7,7 +7,7 @@ class BaseModel(Model):
     class Meta:
         database = conn
 
-class Rule(BaseModel):
+class TransformRule(BaseModel):
     rule_id = AutoField(column_name='RuleID')
     sample = TextField(column_name='Sample')
     result = TextField(column_name='Result')
@@ -16,4 +16,4 @@ class Rule(BaseModel):
     timestamp = DateField(column_name='TimeStamp')
 
     class Meta:
-        table_name = 'Rule'
+        table_name = 'Rules'

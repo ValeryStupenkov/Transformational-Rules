@@ -18,11 +18,11 @@ class Strategy(Enum):
 # int group - номер группы
 # int priority - приоритет
 def create_rule(left, right, group=1, priority=1):
-    bd.create_rule(left, right, group, priority)
+    bd.create_rule_from_strings(left, right, group, priority)
     return (left, right)
 
 # Получить правило по указанному id
-def get_rule(id):
+def get_rule_by_id(id):
     rule = bd.get_rule_by_id(id)
     return rule
 
@@ -73,8 +73,76 @@ def create_common_rule(rule1, rule2, blanks=True, group=1):
     new_rules = []
     for left in left_samples.keys():
         for right in right_samples.keys():
-            new_rules += (left, right)
-    for rule in new_rules:
-        bd.create_rule(rule, group)
+            new_rules.append(tuple([left, right]))
+    #for rule in new_rules:
+    #    bd.create_rule(rule, group)
     return new_rules
 
+# Создание правил на основе двух входных строк
+def create_rules(s1, s2, blanks=True, group=1, priority=1):
+    # Получаем шаблоны с переменными в виде словаря, где шаблон - ключ
+    if blanks:
+        samples = ds.calc_lev_with_blanks(s1, s2)
+    else:
+        samples = ds.calc_lev_without_blanks(s1, s2)
+
+    rules = []
+    # Составляем правила, записываем в список пар
+    for s in samples.keys():
+        # s - образец; sample[s] - словарь с переменными
+        rules.append(us.make_rule_from_sample(s, samples[s]))
+
+    #for rule in rules:
+    #    bd.create_rule(rule, group, priority)
+
+    return rules
+
+# Создать правило в базу данных
+# Параметры:
+# (string, string) rule - правило
+# int group - номер группы
+# int priority - приоритет
+def save_rule(rule, group=1, priority=1):
+    bd.create_rule(rule, group, priority)
+
+# Создать правило в базу данных
+# Параметры:
+# [(string, string)] rules - правила
+# int group - номер группы
+# int priority - приоритет
+def save_rules(rules, group=1, priority=1):
+    for rule in rules:
+        bd.create_rule(rule, group, priority)
+
+# int id
+# Удаление правила из базы по id
+def delete_rule_by_id(id):
+    bd.delete_rule_by_id(id)
+
+# (string, string) rule
+# Поиск правила и удаление его из базы
+def delete_rule(rule):
+    id = bd.get_rule_id(rule)
+    if id == -1:
+        raise Exception("В базе данных отсутствут указанное правило")
+    else:
+        bd.delete_rule_by_id(id)
+        print("Правило удалено")
+
+
+# (string, string) rule
+# Возвращает id правила в базе, если правило есть в ней, иначе -1
+def check_rule(rule):
+    id = bd.get_rule_id(rule)
+    return id
+
+# string name
+# Создать файл бд с указанными именем
+def initiate_rule_base(name):
+    bd.create_rule_base(name)
+    print("База правил инициализирована")
+
+
+#print(create_rules("геометрия", "гомеопатия"))
+# TODO разобраться, как исправить коллизии в переменных
+print(create_common_rule(("XомеYия", "XомеYий"), ("гXмеYия", "гXмеYий")))

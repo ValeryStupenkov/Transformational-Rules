@@ -7,8 +7,8 @@ class BaseModel(Model):
         database = conn
 
 class Group(BaseModel):
-    group_id = AutoField(column_name='RuleID')
+    group_id = AutoField(column_name='GroupID')
     group_name = TextField(column_name='Name')
 
     class Meta:
-        table_name = 'Group'
+        table_name = 'Groups'
