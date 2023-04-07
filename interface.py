@@ -1,5 +1,4 @@
 import bd
-import dynamic_levenshtein as ds
 import use_levenstein as us
 import range_rules as rr
 from enum import Enum
@@ -56,45 +55,28 @@ def use_rule(string, strategy, group=1, priority=1):
     elif strategy == Strategy.RANDOM:
         rule = rr.get_random_rule(string, group, priority)
 
-    # Вернёт словарь с образцами и переменными
-    samples = ds.calc_lev_with_steps(rule[0], string)
     # Получаем значения переменных
-    vars = samples[rule[0]]
+    vars = us.fill_variables(rule[0], string)
 
     # Получаем результат
     rule = us.get_result_of_rule(rule[1], vars)
     return rule
 
+# Получает образцы с переменными и на ихх основе создаёт новые правила
+# sample1, sample2: dict() {"sample": vars}
+def create_new_rules(sample1, sample2):
+    s1 = list(sample1.keys())[0]
+    s2 = list(sample2.keys())[0]
+    rules = us.create_rule_from_samples(s1, s2, sample1[s1], sample2[s2])
+    return rules
 
-# TODO Создание общих правил на основе двух сущеcтвующих
-def create_common_rule(rule1, rule2, blanks=True, group=1):
-    left_samples = ds.calc_lev_with_steps(rule1[0], rule2[0])
-    right_samples = ds.calc_lev_with_steps(rule1[1], rule2[1])
-    new_rules = []
-    for left in left_samples.keys():
-        for right in right_samples.keys():
-            new_rules.append(tuple([left, right]))
-    #for rule in new_rules:
-    #    bd.create_rule(rule, group)
-    return new_rules
+def create_common_rules(rule1, rule2):
+    rules = us.create_rule_from_rules(rule1, rule2)
+    return rules
 
 # Создание правил на основе двух входных строк
-def create_rules(s1, s2, blanks=True, group=1, priority=1):
-    # Получаем шаблоны с переменными в виде словаря, где шаблон - ключ
-    if blanks:
-        samples = ds.calc_lev_with_blanks(s1, s2)
-    else:
-        samples = ds.calc_lev_without_blanks(s1, s2)
-
-    rules = []
-    # Составляем правила, записываем в список пар
-    for s in samples.keys():
-        # s - образец; sample[s] - словарь с переменными
-        rules.append(us.make_rule_from_sample(s, samples[s]))
-
-    #for rule in rules:
-    #    bd.create_rule(rule, group, priority)
-
+def create_rules(s1, s2, blanks=True):
+    rules = us.create_rules_from_strings(s1, s2, blanks)
     return rules
 
 # Создать правило в базу данных
@@ -132,17 +114,24 @@ def delete_rule(rule):
 
 # (string, string) rule
 # Возвращает id правила в базе, если правило есть в ней, иначе -1
-def check_rule(rule):
+def check_rule_in_database(rule):
     id = bd.get_rule_id(rule)
     return id
 
 # string name
-# Создать файл бд с указанными именем
+# Создать файл бд с указанным именем
 def initiate_rule_base(name):
     bd.create_rule_base(name)
     print("База правил инициализирована")
 
+# Проверка соответствия строки образцу
+def check_sample(sample, string):
+    return us.check_sample(sample, string)
 
-#print(create_rules("геометрия", "гомеопатия"))
+#print(create_rules("систематическая", "периодическая", True))
+
 # TODO разобраться, как исправить коллизии в переменных
-print(create_common_rule(("XомеYия", "XомеYий"), ("гXмеYия", "гXмеYий")))
+#print(create_common_rule(("сXстематY", "перXодY"), ("систXматY ", "пXриодY")))
+sample1 = {"XомеYия": {"X":"ге", "Y":"тр"}}
+sample2 = {"гXмеYия": {"X":"о", "Y":"опат"}}
+print(create_common_rules(sample1, sample2))

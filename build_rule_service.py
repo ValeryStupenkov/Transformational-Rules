@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import unravel_index
+# Скорее всего эта часть вообще не нужна
 
 # Пострение правил на основе двух строк
 def build_rules(s1, s2, F, blanks):
@@ -136,7 +137,7 @@ def find_max_pos(a, n, m, blanks):
     print(max_i, max_j)
     return max_i, max_j
 
-
+'''
 # Построение правил на основе строки и шаблона
 # Вариант build_rule с возможностью сопоставлять переменные (экспериментальный)
 # TODO исправить: неправильно сопоставляется в случае, если шаблон длиннее строки
@@ -242,8 +243,8 @@ def build_rule_for_sample(s1, s2, F, vars, blanks, i, j):
                         res += key
                         break
     return res
-
-def build_rules_for_sample(s1, s2, F, blanks):
+'''
+'''def build_rules_for_sample(s1, s2, F, blanks):
     n = len(s1)
     m = len(s2)
     results = {}
@@ -260,6 +261,7 @@ def build_rules_for_sample(s1, s2, F, blanks):
                 res = join_variables(res, vars)
                 results[res] = vars
     return results
+'''
 
 # Проход по реверснутой строке и склеивание соседних переменных
 def join_variables(s, vars):

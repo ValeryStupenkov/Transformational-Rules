@@ -1,10 +1,10 @@
-import dynamic_levenshtein as ld
+import dynamic_levenshtein as ds
 
-#Правила должны храниться в виде пар, в коде должны быть в виде tuple
+# Правила должны храниться в виде пар, в коде должны быть в виде tuple
 
 # Метод для проверки соответствия левой части правила образцу
 def check_sample(sample, rule):
-    rules = ld.calc_lev_with_steps(sample, rule)
+    rules = ds.calc_lev_with_steps(sample, rule)
     for rule in rules.keys():
         if sample == rule:
             return True
@@ -13,19 +13,19 @@ def check_sample(sample, rule):
 # Метод для создания новых образцов на основе двух обычных строк
 def create_new_samples(s1, s2, blanks):
     if blanks:
-        samples = ld.calc_lev_with_blanks(s1, s2)
+        samples = ds.calc_lev_with_blanks(s1, s2)
     else:
-        samples = ld.calc_lev_without_blanks(s1, s2)
+        samples = ds.calc_lev_without_blanks(s1, s2)
     return samples
 
 # Создание новых образцов на основе существующих образцов
 def create_new_samples(sample, s):
-    samples = ld.calc_lev_with_steps(sample, s)
+    samples = ds.calc_lev_with_steps(sample, s)
     return samples
 
 # Создание более общих образцов
 def find_most_common(s1, s2):
-    results = ld.calc_lev_with_steps(s1, s2)
+    results = ds.calc_lev_with_steps(s1, s2)
     return results
 
 # rule это tuple вида (sample, result)
@@ -88,3 +88,56 @@ def make_rule_from_sample(s, vars):
     print(tmp_vars)
     return res
 
+# Создание правил на основе двух входных строк
+def create_rules_from_strings(s1, s2, blanks):
+    if blanks:
+        samples = ds.calc_lev_with_blanks(s1, s2)
+    else:
+        samples = ds.calc_lev_without_blanks(s1, s2)
+
+    rules = []
+    # Составляем правила, записываем в список пар
+    for s in samples.keys():
+        # s - образец; sample[s] - словарь с переменными
+        rules.append(make_rule_from_sample(s, samples[s]))
+    return rules
+
+# Создаёт правила на основе существующих
+#TODO fix или удалить
+def create_rule_from_rules(rule1, rule2):
+    left_samples = ds.calc_lev_with_steps(rule1[0], rule2[0])
+    right_samples = ds.calc_lev_with_steps(rule1[1], rule2[1])
+    new_rules = []
+    for left in left_samples.keys():
+        for right in right_samples.keys():
+            new_rules.append(tuple([left, right]))
+    return new_rules
+
+# Возвращает заполненные переменные
+def fill_variables(sample, string):
+    samples = ds.calc_lev_with_steps(sample, string)
+    vars = samples[sample]
+    return vars
+
+# Создаёт более общие правила на основе образцов
+def create_rule_from_samples(sample1, sample2, vars1, vars2):
+    rules = []
+    new_samples = ds.calc_lev_with_steps(sample1, sample2)
+    for sample in new_samples.keys():
+        tmp_vars = new_samples[sample]
+        for key in tmp_vars.keys():
+            tmp_vars[key] = (insert_variables_values(tmp_vars[key][0], vars1), insert_variables_values(tmp_vars[key][1], vars2))
+        rules.append(make_rule_from_sample(sample, tmp_vars))
+    return rules
+
+# string s
+# dict vars
+# Вставляет значения переменных в строку
+def insert_variables_values(s, vars):
+    res = ""
+    for i in range(len(s)):
+        if s[i].isupper():
+            res += vars[s[i]]
+        else:
+            res += s[i]
+    return res

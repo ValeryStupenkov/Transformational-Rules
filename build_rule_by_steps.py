@@ -7,7 +7,8 @@ def build_iterations(s1, s2, F):
     vars = {"X": ("", ""), "Y": ("", ""), "Z": ("", ""),
             "A": ("", ""), "B": ("", ""), "C": ("", ""),
             "D": ("", ""), "E": ("", ""), "F": ("", ""), "G": ("", "")}
-    results = {"": [[0, 0], vars]}
+    #results = {"": [[0, 0], vars]}
+    results = {}
     begins = find_max_poses(F, n, m, True)
     samples = {}
     for begin in begins:
@@ -16,11 +17,9 @@ def build_iterations(s1, s2, F):
         prev_j = 0
         max_i = prev_i
         max_j = prev_j
-        tmp_dict = {}
         tmp_vars = vars.copy()
         first_step_res = build_rule_step("", s1, s2, tmp_vars, prev_i, prev_j, begin)
-        tmp_dict[first_step_res] = [begin, tmp_vars]
-        results = tmp_dict
+        results[first_step_res] = [begin, tmp_vars]
         # Доработать условие цикла
         while max_i < n and max_j < m:
             tmp_dict = {}
@@ -146,12 +145,12 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
             last_char = " "
         if s1[i].isupper():
             if last_char.isupper():
-                vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[j])
+                vars[last_char] = (vars[last_char][0] + s1[i], vars[last_char][1] + s2[j])
             else:
                 for key in vars.keys():
                     if vars[key] == ("", ""):
                         # vars[key] = ("", delete_variables(s2[j]))
-                        vars[key] = ("", s2[j])
+                        vars[key] = (s1[i], s2[j])
                         res += key
                         break
         else:
@@ -161,12 +160,12 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
         last_char = res[-1]
         if s1[i].isupper():
             if last_char.isupper():
-                vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[j])
+                vars[last_char] = (vars[last_char][0] + s1[i], vars[last_char][1] + s2[j])
             else:
                 for key in vars.keys():
                     if vars[key] == ("", ""):
                         #vars[key] = ("", delete_variables(s2[j]))
-                        vars[key] = ("", s2[j])
+                        vars[key] = (s1[i], s2[j])
                         res += key
                         break
         else:
@@ -180,7 +179,7 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
         if last_char.isupper():
             if i != prev_i + 1:
                 # vars[key] = (delete_variables(s1[prev_i + 1:i]), "")
-                vars[last_char] = (vars[last_char][0] + s1[prev_i + 1:i], "")
+                vars[last_char] = (vars[last_char][0] + s1[prev_i + 1:i], vars[last_char][1])
             if j != prev_j + 1:
                 # vars[key] = (vars[key][0], delete_variables(s2[prev_j + 1:j]))
                 vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[prev_j + 1:j])
@@ -198,7 +197,7 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
         # Здесь в конце res всегда переменная, так что просто дописываем в неё
         last_char = res[-1]
         if s1[i].isupper():
-            vars[last_char] = (vars[last_char][0], vars[last_char][1] + s2[j])
+            vars[last_char] = (vars[last_char][0] + s1[i], vars[last_char][1] + s2[j])
         else:
             res += s2[j]
     return res
@@ -227,3 +226,4 @@ def replace_equal_vars(sample, vars):
         res += sample[i]
 
     return res[::-1]
+
