@@ -62,20 +62,20 @@ def use_rule(string, strategy, group=1, priority=1):
     rule = us.get_result_of_rule(rule[1], vars)
     return rule
 
-# Получает образцы с переменными и на ихх основе создаёт новые правила
+# Получает образцы с переменными и на их основе создаёт новые правила
 # sample1, sample2: dict() {"sample": vars}
-def create_new_rules(sample1, sample2):
+def create_rules_from_samples(sample1, sample2):
     s1 = list(sample1.keys())[0]
     s2 = list(sample2.keys())[0]
     rules = us.create_rule_from_samples(s1, s2, sample1[s1], sample2[s2])
     return rules
 
-def create_common_rules(rule1, rule2):
+def create_common_rule(rule1, rule2):
     rules = us.create_rule_from_rules(rule1, rule2)
     return rules
 
 # Создание правил на основе двух входных строк
-def create_rules(s1, s2, blanks=True):
+def generate_rules(s1, s2, blanks=True):
     rules = us.create_rules_from_strings(s1, s2, blanks)
     return rules
 
@@ -128,10 +128,10 @@ def initiate_rule_base(name):
 def check_sample(sample, string):
     return us.check_sample(sample, string)
 
-#print(create_rules("систематическая", "периодическая", True))
+#print(create_rules("геометрия", "гомеопатия", False))
 
 # TODO разобраться, как исправить коллизии в переменных
-#print(create_common_rule(("сXстематY", "перXодY"), ("систXматY ", "пXриодY")))
+#print(create_common_rule(("сXстематY ", "XgYcZcgA"), ("систXматY ", "aXcYcgZ")))
 sample1 = {"XомеYия": {"X":"ге", "Y":"тр"}}
 sample2 = {"гXмеYия": {"X":"о", "Y":"опат"}}
-print(create_common_rules(sample1, sample2))
+print(create_rules_from_samples(sample1, sample2))
