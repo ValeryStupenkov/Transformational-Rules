@@ -68,7 +68,7 @@ def calc_lev_with_blanks_for_sample(s1, s2):
     return rules
 
 # Основной метод, в нём работает почти всё
-def calc_lev_with_steps(s1, s2):
+def calc_lev_with_steps(s1, s2, blanks=True):
     n = len(s1)
     m = len(s2)
     # Инициализация матрицы
@@ -84,7 +84,7 @@ def calc_lev_with_steps(s1, s2):
     for line in F:
         print(line)
 
-    rules = brs.build_iterations(s1, s2, F)
+    rules = brs.build_iterations(s1, s2, F, blanks)
     print(rules)
     return rules
 

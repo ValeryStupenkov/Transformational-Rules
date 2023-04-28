@@ -1,16 +1,17 @@
-# This is a sample Python script.
+import sys
+import sqlite3
+import pandas as pd
+sys.path.append("Code/src")
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import transformational_rules as tr
+
+tr.initiate_rule_base()
+
+db = sqlite3.connect('transformrules.db')
+table = pd.read_sql_query("SELECT * from Rules", db)
+table.to_csv('Rules' + '.csv', index_label='index')
+
+tr.create_rule("Paul", "Paulina")
+tr.get_all_rules()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

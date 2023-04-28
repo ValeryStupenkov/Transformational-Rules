@@ -16,8 +16,8 @@ class Strategy(Enum):
 # string right - результат применения правила
 # int group - номер группы
 # int priority - приоритет
-def create_rule(left, right, group=1, priority=1):
-    bd.create_rule_from_strings(left, right, group, priority)
+def create_rule(left, right, group=1, priority=1, blanks=1):
+    bd.create_rule_from_strings(left, right, group, priority, blanks)
     return (left, right)
 
 # Получить правило по указанному id
@@ -38,28 +38,38 @@ def get_rule(string, strategy, group=1, priority=1):
 # Получить все правила из базы
 def get_all_rules():
     rules = bd.get_all_rules()
-    return rules
+    all_rules = []
+    for rule in rules:
+        rule_data = {}
+        for key in rule.keys():
+            rule_data[key] = rule[key]
+        all_rules.append(rule_data)
+    return all_rules
+
+def get_all_groups():
+    groups = bd.get_all_groups()
+    return groups
 
 #TODO
 # Получить подходящее правило с помощью выбранной стратегии ранжирования и вернуть результат его применения
-def use_rule(string, strategy, group=1, priority=1):
+def use_rule(string, strategy, group=1, priority=1, blanks=True):
     if not isinstance(strategy, Strategy):
         raise TypeError('startegy must be an instance of Strategy Enum')
 
     if strategy == Strategy.LEAST_COMMON:
-        rule = rr.get_least_common(string, group, priority)
+        rule = rr.get_least_common(string, group, priority, blanks)
     elif strategy == Strategy.MOST_COMMON:
-        rule = rr.get_most_common(string, group, priority)
+        rule = rr.get_most_common(string, group, priority, blanks)
     elif strategy == Strategy.TIMESTAMP:
-        rule = rr.get_latest_rule(string, group, priority)
+        rule = rr.get_latest_rule(string, group, priority, blanks)
     elif strategy == Strategy.RANDOM:
-        rule = rr.get_random_rule(string, group, priority)
+        rule = rr.get_random_rule(string, group, priority, blanks)
 
     # Получаем значения переменных
-    vars = us.fill_variables(rule[0], string)
+    vars = us.fill_variables(rule.sample, string)
 
     # Получаем результат
-    rule = us.get_result_of_rule(rule[1], vars)
+    rule = us.get_result_of_rule(rule.result, vars)
     return rule
 
 # Получает образцы с переменными и на их основе создаёт новые правила
@@ -84,8 +94,8 @@ def generate_rules(s1, s2, blanks=True):
 # (string, string) rule - правило
 # int group - номер группы
 # int priority - приоритет
-def save_rule(rule, group=1, priority=1):
-    bd.create_rule(rule, group, priority)
+def save_rule(rule, group=1, priority=1, blanks=True):
+    bd.create_rule(rule, group, priority, blanks)
 
 # Создать правило в базу данных
 # Параметры:
@@ -120,18 +130,31 @@ def check_rule_in_database(rule):
 
 # string name
 # Создать файл бд с указанным именем
-def initiate_rule_base(name):
-    bd.create_rule_base(name)
+def initiate_rule_base():
+    bd.create_rule_base("transformrules")
     print("База правил инициализирована")
 
 # Проверка соответствия строки образцу
-def check_sample(sample, string):
-    return us.check_sample(sample, string)
+def check_sample(sample, string, blanks=True):
+    return us.check_sample(sample, string, blanks)
 
 #print(create_rules("геометрия", "гомеопатия", False))
 
 # TODO разобраться, как исправить коллизии в переменных
 #print(create_common_rule(("сXстематY ", "XgYcZcgA"), ("систXматY ", "aXcYcgZ")))
-sample1 = {"XомеYия": {"X":"ге", "Y":"тр"}}
-sample2 = {"гXмеYия": {"X":"о", "Y":"опат"}}
-print(create_rules_from_samples(sample1, sample2))
+#sample1 = {"XомеYия": {"X":"ге", "Y":"тр"}}
+#sample2 = {"гXмеYия": {"X":"о", "Y":"опат"}}
+#print(create_rules_from_samples(sample1, sample2))
+
+
+#initiate_rule_base()
+
+#create_rule("Paul", "Paulina")
+#create_rule("Smth", "Smth2", 2, 2)
+#create_rule("XомеYия", "гXмеYия", 2, 1)
+print(get_all_rules())
+groups = get_all_groups()
+for group in groups:
+    print(group.group_id, group.group_name)
+
+
