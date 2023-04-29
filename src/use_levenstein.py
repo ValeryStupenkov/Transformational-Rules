@@ -3,8 +3,8 @@ import dynamic_levenshtein as ds
 # Правила должны храниться в виде пар, в коде должны быть в виде tuple
 
 # Метод для проверки соответствия левой части правила образцу
-def check_sample(sample, rule, blanks):
-    rules = ds.calc_lev_with_steps(sample, rule, blanks)
+def check_sample(sample, rule):
+    rules = ds.calc_lev_with_steps(sample, rule)
     for r in rules.keys():
         if sample == r:
             return True
@@ -45,7 +45,7 @@ def get_result_of_rule(sample, vars):
     res = ""
     for i in range(len(sample)):
         if sample[i].isupper():
-            res += vars[sample[i]]
+            res += vars[sample[i]][1]
         else:
             res += sample[i]
     return res

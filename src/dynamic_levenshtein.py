@@ -68,7 +68,7 @@ def calc_lev_with_blanks_for_sample(s1, s2):
     return rules
 
 # Основной метод, в нём работает почти всё
-def calc_lev_with_steps(s1, s2, blanks=True):
+def calc_lev_with_steps(s1, s2):
     n = len(s1)
     m = len(s2)
     # Инициализация матрицы
@@ -84,16 +84,11 @@ def calc_lev_with_steps(s1, s2, blanks=True):
     for line in F:
         print(line)
 
-    rules = brs.build_iterations(s1, s2, F, blanks)
-    print(rules)
+    rules = brs.build_iterations(s1, s2, F)
+    #print(rules)
     return rules
 
 
-#calc_lev_with_blanks("гомеопат", "геометрия")
-#calc_lev_without_blanks("гомеопатия", "геометрия")
-#calc_lev_without_blanks("баран", "баклан")
-#calc_lev_with_blanks("баран", "баралок")
-#calc_lev_with_blanks_for_sample("баXран", "баран")
 
-#print(calc_lev_with_steps("XомеYия", "гXмеYия"))
-#print(calc_lev_with_steps("XомеYий", "гXмеYий"))
+print(calc_lev_with_steps("XеYZрA", "геометрия"))
+#print(calc_lev_with_steps("", "гXмеYий"))

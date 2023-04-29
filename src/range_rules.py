@@ -5,13 +5,13 @@ import random
 # Реализация стратегии частное-общее, выбор более "сложных" правил
 def get_least_common(string, group=-1, priority=-1):
     rules = bd.get_rules_by_parameters(string, group, priority)
+    if len(rules) == 0:
+        return None
     mp_rule = rules[0]
     for rule in rules:
-        blanks1 = rule.blanks == 1
-        blanks2 = mp_rule.blanks == 1
-        if ul.check_sample(rule.sample, mp_rule.sample, blanks1):
+        if ul.check_sample(rule.sample, mp_rule.sample):
             continue
-        elif ul.check_sample(mp_rule.sample, rule.sample, blanks2):
+        elif ul.check_sample(mp_rule.sample, rule.sample):
             mp_rule = rule
         else:
             if rule.priority > mp_rule.priority:
@@ -23,11 +23,9 @@ def get_most_common(string, group=-1, priority=-1):
     rules = bd.get_rules_by_parameters(string, group, priority)
     mc_rule = rules[0]
     for rule in rules:
-        blanks1 = rule.blanks == 1
-        blanks2 = mc_rule.blanks == 1
-        if ul.check_sample(rule.sample, mc_rule.sample, blanks1):
+        if ul.check_sample(rule.sample, mc_rule.sample):
             mc_rule = rule
-        elif ul.check_sample(mc_rule.sample, rule.sample, blanks2):
+        elif ul.check_sample(mc_rule.sample, rule.sample):
             continue
         else:
             if rule.priority > mc_rule.priority:
@@ -47,7 +45,6 @@ def get_latest_rule(string, group=-1, priority=-1):
     for rule in rules:
         if rule.timestamp > latest_rule.timestamp:
             latest_rule = rule
-
     return latest_rule
 
 

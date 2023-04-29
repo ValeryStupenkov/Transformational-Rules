@@ -1,15 +1,14 @@
 import numpy as np
 import build_rule_service as bs
 
-def build_iterations(s1, s2, F, blanks):
+def build_iterations(s1, s2, F):
     n = len(s1)
     m = len(s2)
     vars = {"X": ("", ""), "Y": ("", ""), "Z": ("", ""),
             "A": ("", ""), "B": ("", ""), "C": ("", ""),
             "D": ("", ""), "E": ("", ""), "F": ("", ""), "G": ("", "")}
-    #results = {"": [[0, 0], vars]}
     results = {}
-    begins = find_max_poses(F, n, m, blanks)
+    begins = find_max_poses(F, n, m)
     samples = {}
     for begin in begins:
         # first step
@@ -33,7 +32,7 @@ def build_iterations(s1, s2, F, blanks):
                     tmp_dict[key] = results[key]
                     continue
                 else:
-                    maxes = find_max_poses(F[results[key][0][0]+1:, results[key][0][1]+1:], n, m, blanks)
+                    maxes = find_max_poses(F[results[key][0][0]+1:, results[key][0][1]+1:], n, m)
 
                 for max in maxes:
                     tmp_vars = results[key][1].copy()
@@ -94,34 +93,22 @@ def build_iterations(s1, s2, F, blanks):
 
 
 
-def find_max_poses(a, n, m, blanks):
+def find_max_poses(a, n, m):
     shape = a.shape
     max_elem = a.max()
     maxes = []
-    if blanks:
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                if a[i][j] == max_elem:
-                    maxes.append([i, j])
-    else:
-        tmp = a[1:, 1:]
-        if a[0][0] >= tmp.max():
-            maxes.append([0, 0])
-        else:
-            max_elem = tmp.max()
-            for i in range(shape[0]-1):
-                for j in range(shape[1]-1):
-                    if tmp[i][j] == max_elem:
-                        maxes.append([i, j])
-            shape = (shape[0]-1, shape[1]-1)
+    for i in range(shape[0]):
+        for j in range(shape[1]):
+            if a[i][j] == max_elem:
+               maxes.append([i, j])
     for max in maxes:
         max[0] += n-shape[0]
         max[1] += m-shape[1]
     # Отладочная печать
-    print(maxes)
+    #print(maxes)
     return maxes
 
-
+# TODO исправить: количество переменных должно не меняться при соспоставлении со строкой, удовлетворяющей образцу
 def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
     i = max[0]
     j = max[1]
@@ -155,6 +142,8 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
                         break
         else:
             res += s2[j]
+
+    # TODO внести изменения в этот и следующий if, чтобы при переходе на переменную добавлялась новая переменная
     # Случай, при котором всё ок
     elif i == prev_i + 1 and j == prev_j + 1:
         if res != "":

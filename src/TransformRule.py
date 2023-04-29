@@ -10,7 +10,6 @@ class TransformRule(Model):
     result = TextField()
     group = ForeignKeyField(gr.Group, backref='Rules')
     priority = IntegerField()
-    blanks = IntegerField()
     timestamp = DateTimeField()
 
     class Meta:

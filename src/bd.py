@@ -30,20 +30,20 @@ def get_rule_id(rule):
         return -1
 
 # Создание правила в бд
-def create_rule_from_strings(sample, result, group, priority, blanks):
+def create_rule_from_strings(sample, result, group, priority):
     try:
         gr.Group.select().where(gr.Group.group_id == group).get()
-    except DoesNotExist as de:
+    except DoesNotExist:
         gr.Group.create(group_id=group, group_name="")
-    tr.TransformRule.create(sample=sample, result=result, group=group, priority=priority, blanks=blanks, timestamp=datetime.now())
+    tr.TransformRule.create(sample=sample, result=result, group=group, priority=priority, timestamp=datetime.now())
 
 # Создание правила в бд на основе пары
-def create_rule(rule, group, priority, blanks):
+def create_rule(rule, group, priority):
     try:
         gr.Group.select().where(gr.Group.group_id == group).get()
-    except DoesNotExist as de:
+    except DoesNotExist:
         gr.Group.create(group_id=group, group_name="")
-    tr.TransformRule.create(sample=rule[0], result=rule[1], group=group, priority=priority, blanks=blanks, timestamp=datetime.now())
+    tr.TransformRule.create(sample=rule[0], result=rule[1], group=group, priority=priority, timestamp=datetime.now())
 
 # Удаление правила по id
 def delete_rule_by_id(id):
@@ -65,7 +65,7 @@ def get_rules(string):
 # Возвращает правила, применимые к строке с указанными группой и приоритетом
 def get_rules_by_parameters(string, group=-1, priority=-1):
     if group != -1 and priority != -1:
-        query = tr.TransformRule.select().where(tr.TransformRule.group == group and tr.TransformRule.priority==priority)
+        query = tr.TransformRule.select().where(tr.TransformRule.group == group and tr.TransformRule.priority == priority)
     elif group != -1:
         query = tr.TransformRule.select().where(tr.TransformRule.group == group)
     elif priority != -1:
@@ -76,9 +76,9 @@ def get_rules_by_parameters(string, group=-1, priority=-1):
     rules = []
     for rule in rules_selected:
         blanks = rule.blanks == 1
-        if ul.check_sample(rule.sample, string, blanks):
+        if ul.check_sample(rule.sample, string):
             rules.append(rule)
-    return rules_selected
+    return rules
 
 # Создание группы в бд
 def create_group(name):
