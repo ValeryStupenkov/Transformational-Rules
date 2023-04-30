@@ -1,9 +1,16 @@
 import bd
 import use_levenstein as ul
 import random
+from enum import Enum
+
+class Strategy(Enum):
+    MOST_COMMON = "most_common"
+    LEAST_COMMON = "least_common"
+    TIMESTAMP = "timestamp"
+    RANDOM = "random"
 
 # Реализация стратегии частное-общее, выбор более "сложных" правил
-def get_least_common(string, group=-1, priority=-1):
+def get_least_common(string, group, priority):
     rules = bd.get_rules_by_parameters(string, group, priority)
     if len(rules) == 0:
         return None
@@ -19,7 +26,7 @@ def get_least_common(string, group=-1, priority=-1):
     return mp_rule
 
 # Реализация стратегии частное-общее, выбор более "простых" правил
-def get_most_common(string, group=-1, priority=-1):
+def get_most_common(string, group, priority):
     rules = bd.get_rules_by_parameters(string, group, priority)
     mc_rule = rules[0]
     for rule in rules:
@@ -33,13 +40,13 @@ def get_most_common(string, group=-1, priority=-1):
     return mc_rule
 
 # Выбор случайного правила с заданными параметрами
-def get_random_rule(string, group=-1, priority=-1):
+def get_random_rule(string, group, priority):
     rules = bd.get_rules_by_parameters(string, group, priority)
     rule = random.choice(rules)
     return rule
 
 # Выбор последнего добавленного правила
-def get_latest_rule(string, group=-1, priority=-1):
+def get_latest_rule(string, group, priority):
     rules = bd.get_rules_by_parameters(string, group, priority)
     latest_rule = rules[0]
     for rule in rules:

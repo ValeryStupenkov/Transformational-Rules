@@ -21,11 +21,12 @@ def get_all_groups():
     return groups
 
 # Возвращает id правила, если оно есть в базе, -1 иначе
+# TransformationalRule rule - правило
 def get_rule_id(rule):
-    query = tr.TransformRule.select().where(tr.TransformRule.sample == rule[0] and tr.TransformRule.result == rule[1])
-    rule = query.execute()
-    if len(rule) > 0:
-        return rule.rule_id
+    query = tr.TransformRule.select().where(tr.TransformRule.sample == rule.left and tr.TransformRule.result == rule.right)
+    r = query.execute()
+    if len(r) > 0:
+        return r[0].rule_id
     else:
         return -1
 
@@ -38,12 +39,13 @@ def create_rule_from_strings(sample, result, group, priority):
     tr.TransformRule.create(sample=sample, result=result, group=group, priority=priority, timestamp=datetime.now())
 
 # Создание правила в бд на основе пары
+# TransformationalRule rule - правило
 def create_rule(rule, group, priority):
     try:
         gr.Group.select().where(gr.Group.group_id == group).get()
     except DoesNotExist:
         gr.Group.create(group_id=group, group_name="")
-    tr.TransformRule.create(sample=rule[0], result=rule[1], group=group, priority=priority, timestamp=datetime.now())
+    tr.TransformRule.create(sample=rule.left, result=rule.right, group=group, priority=priority, timestamp=datetime.now())
 
 # Удаление правила по id
 def delete_rule_by_id(id):

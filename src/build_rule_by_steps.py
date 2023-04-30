@@ -146,20 +146,13 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
     # TODO внести изменения в этот и следующий if, чтобы при переходе на переменную добавлялась новая переменная
     # Случай, при котором всё ок
     elif i == prev_i + 1 and j == prev_j + 1:
-        if res != "":
-            last_char = res[-1]
-        else:
-            last_char = " "
         if s1[i].isupper():
-            if last_char.isupper():
-                vars[last_char] = (vars[last_char][0] + s1[i], vars[last_char][1] + s2[j])
-            else:
-                for key in vars.keys():
-                    if vars[key] == ("", ""):
-                        #vars[key] = ("", delete_variables(s2[j]))
-                        vars[key] = (s1[i], s2[j])
-                        res += key
-                        break
+            for key in vars.keys():
+                if vars[key] == ("", ""):
+                    # vars[key] = ("", delete_variables(s2[j]))
+                    vars[key] = (s1[i], s2[j])
+                    res += key
+                    break
         else:
             res += s2[j]
         # конец эксп части
