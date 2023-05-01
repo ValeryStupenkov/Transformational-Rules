@@ -1,5 +1,3 @@
-import numpy as np
-import build_rule_service as bs
 
 def build_iterations(s1, s2, F):
     n = len(s1)
@@ -108,7 +106,7 @@ def find_max_poses(a, n, m):
     #print(maxes)
     return maxes
 
-# TODO исправить: количество переменных должно не меняться при соспоставлении со строкой, удовлетворяющей образцу
+
 def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
     i = max[0]
     j = max[1]
@@ -143,7 +141,6 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
         else:
             res += s2[j]
 
-    # TODO внести изменения в этот и следующий if, чтобы при переходе на переменную добавлялась новая переменная
     # Случай, при котором всё ок
     elif i == prev_i + 1 and j == prev_j + 1:
         if s1[i].isupper():

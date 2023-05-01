@@ -29,19 +29,6 @@ def find_most_common(s1, s2):
     results = ds.calc_lev_with_steps(s1, s2)
     return results
 
-'''# rule это tuple вида (sample, result)
-def create_common_rules(rule1, rule2):
-    new_samples = create_new_samples(rule1[0], rule2[0])
-    new_results = create_new_samples(rule1[1], rule2[1])
-    new_rules = []
-    # Объединение полученных образцов в правила
-    for sample in new_samples:
-        for result in new_results:
-            new_rules += tr.TransformationalRule(sample, result)
-
-    return new_rules
-'''
-
 # Вернуть правую часть правила с подставленными значениями переменных
 def get_result_of_rule(sample, vars):
     res = ""

@@ -153,7 +153,7 @@ def check_rule_in_database(rule):
 
 # string name
 # Создать файл бд с указанным именем
-def initiate_rule_base():
+def initiate_rule_base(path=" "):
     bd.create_rule_base("transformrules")
     print("База правил инициализирована")
 
@@ -166,23 +166,3 @@ def create_samples(left, right, blanks=True):
     samples = us.create_new_samples(left, right, blanks)
     return samples
 
-#print(generate_rules("геометрия", "гомеопатия", True))
-
-
-#print(create_common_rule(("сXстематY ", "XgYcZcgA"), ("систXматY ", "aXcYcgZ")))
-#sample1 = {"XомеYия": {"X":"ге", "Y":"тр"}}
-#sample2 = {"гXмеYия": {"X":"о", "Y":"опат"}}
-#print(create_rules_from_samples(sample1, sample2))
-
-
-#initiate_rule_base()
-
-#create_rule("Paul", "Paulina")
-#create_rule("Smth", "Smth2", 2, 2)
-#create_rule("геометрия", "гомеопатия", 2, 1)
-#print(get_all_rules())
-#groups = get_all_groups()
-#for group in groups:
-#    print(group.group_id, group.group_name)
-
-#print(use_rule("геометрия", rr.Strategy.RANDOM))

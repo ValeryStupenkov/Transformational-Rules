@@ -70,5 +70,3 @@ def calc_lev_with_steps(s1, s2):
 
 
 
-print(calc_lev_with_steps("XеYZрA", "геометнрия"))
-#print(calc_lev_with_steps("", "гXмеYий"))

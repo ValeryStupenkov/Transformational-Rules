@@ -1,6 +1,3 @@
-import numpy as np
-from numpy import unravel_index
-# Скорее всего эта часть вообще не нужна
 
 # Пострение правил на основе двух строк
 def build_rules(s1, s2, F, blanks):
