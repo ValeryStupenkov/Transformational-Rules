@@ -9,7 +9,7 @@ def build_iterations(s1, s2, F):
     begins = find_max_poses(F, n, m)
     samples = {}
     for begin in begins:
-        # first step
+        # Первый шаг алгоритма
         prev_i = 0
         prev_j = 0
         max_i = prev_i
@@ -17,14 +17,28 @@ def build_iterations(s1, s2, F):
         tmp_vars = vars.copy()
         first_step_res = build_rule_step("", s1, s2, tmp_vars, prev_i, prev_j, begin)
         results[first_step_res] = [begin, tmp_vars]
-        # Доработать условие цикла
+
         while max_i < n and max_j < m:
             tmp_dict = {}
             for key in results:
                 prev_i = results[key][0][0]
                 prev_j = results[key][0][1]
+                # Дошли до края матрицы
                 if prev_i == n-1 or prev_j == m-1:
-                    tmp_dict[key] = [[results[key][0][0]+1, results[key][0][1]+1], results[key][1]]
+                    # Добавить переменную в конец в случае необходимости
+                    if prev_i < n-1 or prev_j < m-1:
+                        new_key = ""
+                        for k in results[key][1].keys():
+                            if results[key][1][k] == ("", ""):
+                                new_key = key + k
+                                if prev_i == n-1:
+                                    results[key][1][k] = ("", s2[prev_j+1:])
+                                elif prev_j == m-1:
+                                    results[key][1][k] = (s1[prev_i+1:], "")
+                                break
+                        tmp_dict[new_key] = [[results[key][0][0]+1, results[key][0][1]+1], results[key][1]]
+                    else:
+                        tmp_dict[key] = [[results[key][0][0] + 1, results[key][0][1] + 1], results[key][1]]
                     continue
                 elif prev_i == n or prev_j == m:
                     tmp_dict[key] = results[key]
@@ -39,7 +53,7 @@ def build_iterations(s1, s2, F):
                     if max[0] != n and max[1] != m and F[max[0]][max[1]] == 0:
                         for k in tmp_vars.keys():
                             if tmp_vars[k] == ("", ""):
-                                tmp_vars[k] = (s1[max[0]:], s2[max[1]:])
+                                tmp_vars[k] = (s1[prev_i+1:], s2[prev_j+1:])
                                 tmp_dict[key+k] = [[n, m], tmp_vars]
                                 break
                         continue
@@ -77,14 +91,7 @@ def build_iterations(s1, s2, F):
     rules = {}
     for key in samples.keys():
         tmp_v = samples[key][1]
-        # Объединение соседних переменных
-        # TODO fix
-        #rule = bs.join_variables(key, tmp_v)
-        rule = key
-        # Удаление дубликатов переменных
-        # TODO fix
-        #rule = replace_equal_vars(rule, tmp_v)
-        rules[rule] = tmp_v
+        rules[key] = tmp_v
 
     return rules
 

@@ -1,6 +1,6 @@
 import numpy as np
-import build_rule_service as bs
-import build_rule_by_steps as brs
+import structural_similarity as bs
+import modified_structural_similarity as brs
 
 # Вычилсение структурного сходства для двух обычных строк с разрешёнными пустыми подстановками
 def calc_lev_with_blanks(s1, s2):
@@ -67,6 +67,5 @@ def calc_lev_with_steps(s1, s2):
     rules = brs.build_iterations(s1, s2, F)
     #print(rules)
     return rules
-
 
 
