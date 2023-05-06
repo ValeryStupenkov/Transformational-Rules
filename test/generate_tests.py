@@ -1,23 +1,28 @@
 import sys
+import unittest
 sys.path.append("D:\VMIK\Диплом\Transformational_rules\src")
-
 import transformational_rules as tr
 import TransformationalRule as r
 
+class TestGenerateRules(unittest.TestCase):
 
+    def test_generate_rules_without_blanks(self):
+        rules = tr.generate_rules("геометрия", "гомеопатия", False)
+        self.assertEqual(rules[0].left, "XеоYтрZ")
+        self.assertEqual(rules[0].right, "XоYопатZ")
+        self.assertEqual(rules[1].left, "геXтрY")
+        self.assertEqual(rules[1].right, "гXопатY")
 
-#rule = rule.TransformationalRule("1", "2")
-rules = tr.generate_rules("acgtacgtacgt", "agtacctaccgt", False)
-for rule in rules:
-    print(rule.left, rule.right)
+    def test_generate_rules_with_blanks(self):
+        rules = tr.generate_rules("геометрия", "гомеопатия", True)
+        self.assertEqual(rules[0].left, "XеYZрA")
+        self.assertEqual(rules[0].right, "XYопаZA")
 
-sample1 = {"сXстематY ": {'X': 'cg', 'Y': 'g', 'Z': 'g'}}
-sample2 = {"систXматY ": {'X': 'a', 'Y': 'c', 'Z': 'cg'}}
-rules = tr.create_rules_from_samples(sample1, sample2)
-for rule in rules:
-    print(rule.left, rule.right)
-
-#rule = r.TransformationalRule("разXо", "разXи")
-#print(tr.use_rule("развезло", rule))
+    def test_create_rules_from_samples(self):
+        sample1 = {"гXмеYия": {'X': 'ео', 'Y': 'тр'}}
+        sample2 = {"XомеYия": {'X': 'г', 'Y': 'опат'}}
+        rules = tr.create_rules_from_samples(sample1, sample2)
+        self.assertEqual(rules[0].left, "геоXтрY")
+        self.assertEqual(rules[0].right, "гоXопатY")
 
 

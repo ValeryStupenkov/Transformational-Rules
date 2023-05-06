@@ -1,3 +1,4 @@
+import modified_structural_similarity as mss
 
 # Пострение правил на основе двух строк
 def build_rules(s1, s2, F, blanks):
@@ -10,9 +11,7 @@ def build_rules(s1, s2, F, blanks):
     for i in range(n):
         for j in range(m):
             if F[i][j] == counted_lev_distance:
-                vars = {"X": ("", ""), "Y": ("", ""), "Z": ("", ""),
-                        "A": ("", ""), "B": ("", ""), "C": ("", ""),
-                        "D": ("", ""), "E": ("", ""), "F": ("", ""), "G": ("", "")}
+                vars = {}
                 res = build_rule(s1, s2, F, vars, blanks, i, j)
                 results[res] = vars
     return results
@@ -27,32 +26,30 @@ def build_rule(s1, s2, F, vars, blanks, i, j):
     while i < n and j < m:
         if F[i][j] != 0:
             # максимальный элемент
-            if i == prev_i or j == prev_j:
+            if prev_i == i and prev_j == j:
                 if i != 0 or j != 0:
-                    # цикл добавления переменной в случае если начало не совпадает
-                    for key in vars.keys():
-                        if vars[key] == ("", ""):
-                            if i != 0:
-                                vars[key] = (s1[0:i], "")
-                            if j != 0:
-                                vars[key] = (vars[key][0], s2[0:j])
-                            res += key
-                            break
+                    # добавление переменной в случае если начало не совпадает
+                    key = mss.new_variable(vars)
+                    vars[key] = ("", "")
+                    if i != 0:
+                        vars[key] = (s1[0:i], "")
+                    if j != 0:
+                        vars[key] = (vars[key][0], s2[0:j])
+                    res += key
                 res += s2[j]
                 i, j = find_max_pos(F[i+1:, j+1:], n, m, blanks)
             # проверка чтобы не выходить за границы
             elif (i == n-2 or j == m-2) or (i == n-1 or j == m-1):
                 # случай для заполнения переменных
                 if i != prev_i+1 or j != prev_j+1:
-                    # цикл добавления переменной
-                    for key in vars.keys():
-                        if vars[key] == ("", ""):
-                            if i != prev_i + 1:
-                                vars[key] = (s1[prev_i+1:i], "")
-                            if j != prev_j + 1:
-                                vars[key] = (vars[key][0], s2[prev_j+1:j])
-                            res += key
-                            break
+                    # добавление переменной
+                    key = mss.new_variable(vars)
+                    vars[key] = ("", "")
+                    if i != prev_i + 1:
+                        vars[key] = (s1[prev_i + 1:i], "")
+                    if j != prev_j + 1:
+                        vars[key] = (vars[key][0], s2[prev_j + 1:j])
+                    res += key
                 res += s2[j]
                 prev_i, prev_j = i, j
                 i += 1
@@ -64,42 +61,35 @@ def build_rule(s1, s2, F, vars, blanks, i, j):
                 i, j = find_max_pos(F[i + 1:, j + 1:], n, m, blanks)
             # случай для заполнения переменных (обычный)
             elif i != prev_i+1 or j != prev_j+1:
-                # цикл добавления переменной
-                for key in vars.keys():
-                    if vars[key] == ("", ""):
-                        if i != prev_i+1:
-                            vars[key] = (s1[prev_i+1:i], "")
-                        if j != prev_j+1:
-                            vars[key] = (vars[key][0], s2[prev_j+1:j])
-                        res += key
-                        break
+                # добавление переменной
+                key = mss.new_variable(vars)
+                vars[key] = ("", "")
+                if i != prev_i + 1:
+                    vars[key] = (s1[prev_i + 1:i], "")
+                if j != prev_j + 1:
+                    vars[key] = (vars[key][0], s2[prev_j + 1:j])
+                res += key
                 res += s2[j]
                 prev_i, prev_j = i, j
                 i, j = find_max_pos(F[i + 1:, j + 1:], n, m, blanks)
 
             # Доп часть для проверки конца
             if i != n and j != m and F[i][j] == 0:
-                # цикл добавления переменной
-                for key in vars.keys():
-                    if vars[key] == ("", ""):
-                        vars[key] = (s1[i:], s2[j:])
-                        res += key
-                        break
+                # добавление переменной
+                key = mss.new_variable(vars)
+                vars[key] = (s1[i:], s2[j:])
+                res += key
                 break
             elif i != n and j == m:
-                # цикл добавления переменной
-                for key in vars.keys():
-                    if vars[key] == ("", ""):
-                        vars[key] = (s1[i:], "")
-                        res += key
-                        break
+                # добавление переменной
+                key = mss.new_variable(vars)
+                vars[key] = (s1[i:], "")
+                res += key
             elif i == n and j != m:
-                # цикл добавления переменной
-                for key in vars.keys():
-                    if vars[key] == ("", ""):
-                        vars[key] = ("", s2[j:])
-                        res += key
-                        break
+                # добавление переменной
+                key = mss.new_variable(vars)
+                vars[key] = ("", s2[j:])
+                res += key
     return res
 
 
@@ -112,13 +102,13 @@ def find_max_pos(a, n, m, blanks):
     if blanks:
         for i in range(shape[0]):
             for j in range(shape[1]):
-                if a[i][j] == max_elem:
+                if a[i, j] == max_elem:
                     max_i = i
                     max_j = j
                     break
     else:
         tmp = a[1:, 1:]
-        if a[0][0] >= tmp.max():
+        if a[0, 0] >= tmp.max():
             max_i, max_j = 0, 0
         else:
             max_elem = tmp.max()
@@ -131,7 +121,6 @@ def find_max_pos(a, n, m, blanks):
             shape = (shape[0]-1, shape[1]-1)
     max_i += n-shape[0]
     max_j += m-shape[1]
-    print(max_i, max_j)
     return max_i, max_j
 
 # Проход по реверснутой строке и склеивание соседних переменных
