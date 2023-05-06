@@ -26,7 +26,7 @@ def build_rule(s1, s2, F, vars, blanks, i, j):
     while i < n and j < m:
         if F[i][j] != 0:
             # максимальный элемент
-            if prev_i == 0 and prev_j == 0:
+            if prev_i == i and prev_j == j:
                 if i != 0 or j != 0:
                     # добавление переменной в случае если начало не совпадает
                     key = mss.new_variable(vars)
@@ -102,13 +102,13 @@ def find_max_pos(a, n, m, blanks):
     if blanks:
         for i in range(shape[0]):
             for j in range(shape[1]):
-                if a[i][j] == max_elem:
+                if a[i, j] == max_elem:
                     max_i = i
                     max_j = j
                     break
     else:
         tmp = a[1:, 1:]
-        if a[0][0] >= tmp.max():
+        if a[0, 0] >= tmp.max():
             max_i, max_j = 0, 0
         else:
             max_elem = tmp.max()

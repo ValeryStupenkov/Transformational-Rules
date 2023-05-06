@@ -10,10 +10,10 @@ def build_iterations(s1, s2, F):
     samples = {}
     for begin in begins:
         # Первый шаг алгоритма
-        prev_i = 0
-        prev_j = 0
-        max_i = prev_i
-        max_j = prev_j
+        prev_i = -1
+        prev_j = -1
+        max_i = 0
+        max_j = 0
         tmp_vars = {}
         first_step_res = build_rule_step("", s1, s2, tmp_vars, prev_i, prev_j, begin)
         results[first_step_res] = [begin, tmp_vars]
@@ -108,7 +108,7 @@ def build_rule_step(res, s1, s2, vars, prev_i, prev_j, max):
     i = max[0]
     j = max[1]
     # максимальный элемент
-    if prev_i == 0 and prev_j == 0:
+    if prev_i == -1 and prev_j == -1:
         if i != 0 or j != 0:
             # добавление переменной в случае если начало не совпадает
             key = new_variable(vars)

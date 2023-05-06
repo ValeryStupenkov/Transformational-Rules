@@ -67,5 +67,3 @@ def calc_lev_with_steps(s1, s2):
     rules = brs.build_iterations(s1, s2, F)
     #print(rules)
     return rules
-
-
