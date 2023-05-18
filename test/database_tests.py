@@ -15,7 +15,19 @@ tr.get_all_rules()
 #create_rule("геометрия", "гомеопатия", 2, 1)
 # TODO
 class TestDatabase(unittest.TestCase):
+    def __init__(self):
+        tr.initiate_rule_base()
+
     def test_create_rule(self):
-        self.assertEqual()
+        rule = tr.create_rule("Paul", "Paulina")
+        self.assertEqual("Paul", rule.left)
+        self.assertEqual("Paulina", rule.right)
+
+    def test_get_rule_by_id(self):
+        rule = tr.get_rule_by_id(1)
+        self.assertEqual("Paul", rule.left)
+        self.assertEqual("Paulina", rule.right)
+
+
 
 
