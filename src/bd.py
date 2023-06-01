@@ -17,7 +17,7 @@ def get_all_rules():
 
 def get_all_groups():
     query = gr.Group.select()
-    groups = query.execute()
+    groups = query.dicts().execute()
     return groups
 
 # Возвращает id правила, если оно есть в базе, -1 иначе
